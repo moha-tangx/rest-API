@@ -47,10 +47,9 @@ router
     // updates a student
     const student = await getStudent(req, res);
     if (student) {
-      update(req, res, student, "name");
-      update(req, res, student, "student_id");
-      update(req, res, student, "age");
-      update(req, res, student, "course");
+      for (const field in student) {
+        update(req, res, student, field);
+      }
       try {
         const updatedStudent = await student.save();
         res.status(202).json(updatedStudent);
@@ -84,8 +83,6 @@ async function getStudent(req, res) {
 }
 
 function update(req, res, obj, field) {
-  if (req.body[field] !== null) {
-    obj[field] = req.body[field];
-  }
+  obj[field] = req.body[field] || obj[field];
 }
 module.exports = router;
